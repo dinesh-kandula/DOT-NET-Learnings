@@ -1,0 +1,47 @@
+﻿@page "/"
+@using TreeDomainLibrary.Models.ModelsDTO
+@using Telerik.FontIcons
+@inject OrganizationTreeBlazor.Services.IApiServices _apiServices
+
+<PageTitle>Home</PageTitle>
+
+<AddEmployee SelectedEmployeeData="@SelectedItem" GetEmployeeData="GetEmployeeData"></AddEmployee>
+
+<div style="margin-top: 70px;">
+
+    @if (EmployeesData.Count == 0)
+    {
+        <p class="loading">Employee Data Loading.....</p>
+    }
+    else
+    {
+        <TelerikTreeView Data="@EmployeesData" @bind-ExpandedItems="@ExpandedData"
+                         SelectionMode="@TreeViewSelectionMode.Single"
+                         SelectedItems="@SelectedItems"
+                         SelectedItemsChanged="@((IEnumerable<object> item) => SelectedItemsHandler(item))">
+            <TreeViewBindings>
+                <TreeViewBinding TextField="Name">
+                    <ItemTemplate>
+                        @{
+                            EmployeeFlatData itm = context as EmployeeFlatData;
+                            <div class="my-3 main-div">
+                                <div class="d-flex mb-2">
+                                    <h4 class="employee-name mb-0">@itm.Name</h4>
+                                    <div class="edit-employeeid">
+                                        <UpdateEmployee SelectedEmployeeData="@itm" GetEmployeeData="GetEmployeeData"></UpdateEmployee>
+                                        <p class="employee-id align-self-end">@itm.EmployeeId</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="child-count m-0">@itm.ChildCount</p>
+                                    <p class="m-0 ms-3">@itm.JobTitle</p>
+                                    <DeleteEmployee SelectedEmployeeData="@itm" GetEmployeeData="GetEmployeeData"></DeleteEmployee>
+                                </div>
+                            </div>
+                        }
+                    </ItemTemplate>
+                </TreeViewBinding>
+            </TreeViewBindings>
+        </TelerikTreeView>
+    }
+</div>

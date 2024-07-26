@@ -1,0 +1,6 @@
+@HRM_OPPS_SOLID_HostAddress = http://localhost:5090
+
+GET {{HRM_OPPS_SOLID_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

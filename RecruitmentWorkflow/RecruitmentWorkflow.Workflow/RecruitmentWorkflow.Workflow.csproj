@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
+    <PackageReference Include="WorkflowCore" Version="3.10.0" />
+    <PackageReference Include="WorkflowCore.Persistence.EntityFramework" Version="3.10.0" />
+    <PackageReference Include="WorkflowCore.Persistence.SqlServer" Version="3.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RecruitmentWorkflow.Models">
+      <HintPath>..\RecruitmentWorkflow.Models\bin\Debug\net8.0\RecruitmentWorkflow.Models.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

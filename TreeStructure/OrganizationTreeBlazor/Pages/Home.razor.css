@@ -1,0 +1,29 @@
+/*.blazor-head {
+    color: yellow;
+    font-size: 32px;
+}*/
+
+.main-div {
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 10px 20px;
+}
+
+.k-treeview {
+    margin-top: 10%;
+}
+
+.employee-name {
+    padding-right: 6px;
+}
+
+.employee-id {
+    margin: 0px;
+    font-size: 10px;
+}
+
+.child-count {
+    border: 1px solid black;
+    border-radius: 20px;
+    padding: 6px 12px;
+}

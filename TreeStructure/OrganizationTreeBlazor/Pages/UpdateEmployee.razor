@@ -1,0 +1,52 @@
+﻿@using OrganizationTreeBlazor.Pages.UIComponents
+@inject OrganizationTreeBlazor.Services.IApiServices _apiServices;
+
+<TelerikButton OnClick="@ToggleDialog" Icon="@FontIcon.Pencil"></TelerikButton>
+
+<TelerikDialog Visible="@Visible" VisibleChanged="@VisibleChangedHandler"
+               Title="@Title" CloseOnOverlayClick="true" @ref="dialog">
+    <DialogContent>
+        @if (LoaderOnFlag)
+        {
+            <Spinner Height="50vh"></Spinner>
+        }
+        else if (PostMessageFlag)
+        {
+            @if (EmployeeTreeNode != null)
+            {
+                <h4 class="text-success">Successfully Updated Employee</h4>
+                <ul>
+                    <li>Name : @EmployeeTreeNode.Name</li>
+                    <li>Job Title: @EmployeeTreeNode.JobTitle</li>
+                    <li>Role: @EmployeeTreeNode.Role</li>
+                    <li>Parent Id: @EmployeeTreeNode.ParentId</li>
+                </ul>
+            }
+            else if (ProblemDetails != null)
+            {
+                <h4 class="text-danger">Failed to Update Employee</h4>
+                <ul>
+                    <li>Title : @ProblemDetails.Title</li>
+                    <li>
+                        <strong>
+                            Message: @ProblemDetails.Message
+                        </strong>
+                    </li>
+                    <li>Http Status Code: @ProblemDetails.Status</li>
+                </ul>
+            }
+        }
+        else
+        {
+            <TelerikForm Model="@EmployeeModel" OnValidSubmit="@OnValidSubmitHandler">
+                <FormValidation>
+                    <DataAnnotationsValidator />
+                </FormValidation>
+                <FormButtons>
+                    <TelerikButton ButtonType="@ButtonType.Submit" ThemeColor="primary">Submit</TelerikButton>
+                    <TelerikButton ButtonType="ButtonType.Button" OnClick="@ClearButton">Clear</TelerikButton>
+                </FormButtons>
+            </TelerikForm>
+        }
+    </DialogContent>
+</TelerikDialog>

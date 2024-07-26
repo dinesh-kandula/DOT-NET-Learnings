@@ -1,0 +1,64 @@
+﻿@using OrganizationTreeBlazor.Pages.UIComponents
+@inject OrganizationTreeBlazor.Services.IApiServices _apiServices;
+
+<div class="add-employoee-container">
+    @if (SelectedEmployeeData != null)
+    {
+        <h3 class="add-employee-info">
+            Click on Add Employee to Recruit Employee under
+            <strong>
+                @SelectedEmployeeData.Name
+            </strong>
+        </h3>
+    }
+
+    <TelerikButton OnClick="@ToggleDialog" ThemeColor="primary">Add Employee</TelerikButton>
+</div>
+
+<TelerikDialog Visible="@Visible" VisibleChanged="@VisibleChangedHandler"
+               Title="@Title" CloseOnOverlayClick="true" @ref="dialog">
+    <DialogContent>
+        @if (LoaderOnFlag)
+        {
+            <Spinner Height="50vh"></Spinner>
+        }
+        else if (PostMessageFlag)
+        {
+            @if (EmployeeTreeNode != null)
+            {
+                <h4 class="text-success">Successfully Added Employee</h4>
+                <ul>
+                    <li>Name : @EmployeeTreeNode.Name</li>
+                    <li>Employee Id: @EmployeeTreeNode.EmployeeId</li>
+                    <li>Job Title: @EmployeeTreeNode.JobTitle</li>
+                    <li>Role: @EmployeeTreeNode.Role</li>
+                </ul>
+            }
+            else if (ProblemDetails != null)
+            {
+                <h4 class="text-danger">Failed to Add Employee</h4>
+                <ul>
+                    <li>Title : @ProblemDetails.Title</li>
+                    <li>
+                        <strong>
+                            Message: @ProblemDetails.Message
+                        </strong>
+                    </li>
+                    <li>Http Status Code: @ProblemDetails.Status</li>
+                </ul>
+            }
+        }
+        else
+        {
+            <TelerikForm Model="@EmployeeModel" OnValidSubmit="@OnValidSubmitHandler">
+                <FormValidation>
+                    <DataAnnotationsValidator />
+                </FormValidation>
+                <FormButtons>
+                    <TelerikButton ButtonType="@ButtonType.Submit" ThemeColor="primary">Submit</TelerikButton>
+                    <TelerikButton ButtonType="ButtonType.Button" OnClick="@ClearButton">Clear</TelerikButton>
+                </FormButtons>
+            </TelerikForm>
+        }
+    </DialogContent>
+</TelerikDialog>
