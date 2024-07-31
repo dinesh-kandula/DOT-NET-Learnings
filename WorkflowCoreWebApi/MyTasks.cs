@@ -9,9 +9,14 @@ namespace WorkflowCoreWebApi
     /// </summary>
     public class Screening : StepBodyAsync
     {
+        private readonly ILogger<Screening> _logger;
+        public Screening(ILogger<Screening> logger)
+        {
+            _logger = logger;
+        }
         public override async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
-            MyData myData = context.Workflow.Data as MyData;
+            MyData myData = (MyData)context.Workflow.Data as MyData;
             if(myData != null )
             {
                 myData.currentInterviewerName = "Recruiter";
@@ -19,7 +24,8 @@ namespace WorkflowCoreWebApi
                 myData.currentInterviewStatus = "InProgress";
                 myData.candidateStatus = "InProgress";
 
-                await Console.Out.WriteLineAsync($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
+                _logger.LogInformation("Hey {CandidateName}, {currentInterviewStage} started, waiting for the interview result.", myData.CandidateName, myData.currentInterviewStage);
+               //await Console.Out.WriteLineAsync($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             }
             return ExecutionResult.Next();
         }
@@ -27,13 +33,19 @@ namespace WorkflowCoreWebApi
 
     public class TechnicalInterview1 : StepBodyAsync
     {
+        private readonly ILogger<TechnicalInterview1> _logger;
+        public TechnicalInterview1(ILogger<TechnicalInterview1> logger)
+        {
+            _logger = logger;
+        }
         public override async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
-            MyData myData = context.Workflow.Data as MyData;
+            MyData myData = (MyData)context.Workflow.Data as MyData;
             myData.currentInterviewerName = "Interviewer Technical";
             myData.currentInterviewStage = "Technical Interview 1";
             myData.currentInterviewStatus = "InProgress";
 
+            _logger.LogInformation($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             await Console.Out.WriteLineAsync($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             return ExecutionResult.Next();
         }
@@ -41,13 +53,19 @@ namespace WorkflowCoreWebApi
 
     public class TechnicalInterview2 : StepBodyAsync
     {
+        private readonly ILogger<TechnicalInterview2> _logger;
+        public TechnicalInterview2(ILogger<TechnicalInterview2> logger)
+        {
+            _logger = logger;
+        }
         public override async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
-            MyData myData = context.Workflow.Data as MyData;
+            MyData myData = (MyData)context.Workflow.Data as MyData;
             myData.currentInterviewerName = "Interviewer Technical";
             myData.currentInterviewStage = "Technical Interview 2";
             myData.currentInterviewStatus = "InProgress";
 
+            _logger.LogInformation($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             await Console.Out.WriteLineAsync($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             return ExecutionResult.Next();
         }
@@ -55,13 +73,19 @@ namespace WorkflowCoreWebApi
 
     public class ManagerInterview : StepBodyAsync
     {
+        private readonly ILogger<ManagerInterview> _logger;
+        public ManagerInterview(ILogger<ManagerInterview> logger)
+        {
+            _logger = logger;
+        }
         public override async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
-            MyData myData = context.Workflow.Data as MyData;
+            MyData myData = (MyData)context.Workflow.Data;
             myData.currentInterviewerName = "Hiring Manager";
             myData.currentInterviewStage = "Manager Interview";
             myData.currentInterviewStatus = "InProgress";
 
+            _logger.LogInformation($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             await Console.Out.WriteLineAsync($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             return ExecutionResult.Next();
         }
@@ -69,13 +93,19 @@ namespace WorkflowCoreWebApi
 
     public class HRInterview : StepBodyAsync
     {
+        private readonly ILogger<HRInterview> _logger;
+        public HRInterview(ILogger<HRInterview> logger)
+        {
+            _logger = logger;
+        }
         public override async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
-            MyData myData = context.Workflow.Data as MyData;
+            MyData myData = (MyData)context.Workflow.Data as MyData;
             myData.currentInterviewerName = "HR";
             myData.currentInterviewStage = "HR Interview";
             myData.currentInterviewStatus = "InProgress";
 
+            _logger.LogInformation($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             await Console.Out.WriteLineAsync($"Hey {myData.CandidateName}, {myData.currentInterviewStage} started, waiting for the interview result.");
             return ExecutionResult.Next();
         }
@@ -83,14 +113,20 @@ namespace WorkflowCoreWebApi
 
     public class OfferLetterRelease : StepBodyAsync
     {
+        private readonly ILogger<OfferLetterRelease> _logger;
+        public OfferLetterRelease(ILogger<OfferLetterRelease> logger)
+        {
+            _logger = logger;
+        }
         public override async Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
-            MyData myData = context.Workflow.Data as MyData;
+            MyData myData = (MyData)context.Workflow.Data;
             myData.currentInterviewerName = "HR";
             myData.currentInterviewStage = "Offer Release";
             myData.currentInterviewStatus = "Approved";
             myData.candidateStatus = "Approved";
 
+            _logger.LogInformation($"Hey {myData.CandidateName}, {myData.currentInterviewStage} you have cleared all Interviews, Offer Letter Will Release soon! ");
             await Console.Out.WriteLineAsync($"Hey {myData.CandidateName}, {myData.currentInterviewStage} you have cleared all Interviews, Offer Letter Will Release soon! ");
             return ExecutionResult.Next();
         }
@@ -98,24 +134,33 @@ namespace WorkflowCoreWebApi
 
     public class SendMail : StepBodyAsync
     {
+        private readonly ILogger<SendMail> _logger;
+        public SendMail(ILogger<SendMail> logger)
+        {
+            _logger = logger;
+        }
         public override Task<ExecutionResult> RunAsync(IStepExecutionContext context)
         {
             MyData myData = context.Workflow.Data as MyData;
 
             if (myData.candidateStatus.ToLower() == "rejected")
             {
+                _logger.LogError($"**Application Update**: Sorry {myData.CandidateName}, your application has been cancelled. Better luck next time!");
                 Console.WriteLine($"**Application Update**: Sorry {myData.CandidateName}, your application has been cancelled. Better luck next time!");
             }
             else if (myData.candidateStatus.ToLower() == "hold")
             {
+                _logger.LogWarning($"**Application Update**: Hi {myData.CandidateName}, your application has been placed on hold. Please be patient, and thank you for waiting.");
                 Console.WriteLine($"**Application Update**: Hi {myData.CandidateName}, your application has been placed on hold. Please be patient, and thank you for waiting.");
             }
             else if (myData.currentInterviewStatus.ToLower() == "approved" && myData.candidateStatus.ToLower() == "approved")
             {
+                _logger.LogInformation($"**Job Offer**: Hearty congratulations to you, {myData.CandidateName}! You are now a part of our team. Your offer letter has been released.");
                 Console.WriteLine($"**Job Offer**: Hearty congratulations to you, {myData.CandidateName}! You are now a part of our team. Your offer letter has been released.");
             }
             else if (myData.currentInterviewStatus.ToLower() == "approved" && myData.candidateStatus.ToLower() == "inprogress")
             {
+                _logger.LogInformation($"**Interview Update**: Congratulations, {myData.CandidateName}! You have successfully cleared the {myData.currentInterviewStage} stage.");
                 Console.WriteLine($"**Interview Update**: Congratulations, {myData.CandidateName}! You have successfully cleared the {myData.currentInterviewStage} stage.");
             }
 

@@ -1,6 +1,10 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using StackExchange.Redis;
 using System.Reflection;
 using WorkflowCoreWebApi;
+using WorkflowCoreWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,28 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+
+/*
+    Used for IDistributedCache - Provides basic cache operations
+ */
+//builder.Services.AddStackExchangeRedisCache(options =>
+//{
+//    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+//});
+
+/*
+    Used for IConnectionMultiplexer - Full access to all Redis
+ */
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+//ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))
+{
+    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis")!, true);
+        return ConnectionMultiplexer.Connect(configuration);
+    }
+);
+builder.Services.AddSingleton<IRedisService, RedisService>();
+
 // Swagger
 builder.Services.AddSwaggerGen(options =>
 {
@@ -26,6 +52,18 @@ builder.Services.AddSwaggerGen(options =>
 // Workflow Custom Middleware
 builder.Services.AddWorkflowServices();
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.Seq(builder.Configuration["Serilog:Seq:ServerUrl"] ?? "http://localhost:5341")
+    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+// Use Serilog
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,7 +71,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-   
+
 }
 
 app.UseHttpsRedirection();

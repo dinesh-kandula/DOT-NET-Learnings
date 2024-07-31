@@ -14,6 +14,7 @@ namespace WorkflowCoreWebApi
             services.AddTransient<ManagerInterview>();
             services.AddTransient<HRInterview>();
             services.AddTransient<OfferLetterRelease>();
+            services.AddTransient<SendMail>();
 
             services.AddTransient<Task1>();
             services.AddTransient<Task2>();

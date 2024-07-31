@@ -1,13 +1,24 @@
 ﻿using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.Extensions.Hosting;
+using StackExchange.Redis;
 using System;
 using System.Xml.Linq;
 using WorkflowCore.Interface;
+using WorkflowCoreWebApi.Services;
 
 namespace WorkflowCoreWebApi
 {
     public class MyWorkflow : IWorkflow<MyData>
     {
+        private readonly IRedisService _redisService;
+        private readonly ILogger<MyWorkflow> _logger;
+        private const string _CandidateListKey = "candidateList";
+        public MyWorkflow(IRedisService redisService, ILogger<MyWorkflow> logger)
+        {
+            _redisService = redisService;
+            _logger = logger;
+        }
+
         public string Id => "MyWorkflow";
         public int Version => 1;
 
@@ -17,6 +28,7 @@ namespace WorkflowCoreWebApi
                 .StartWith(context =>
                 {
                     MyData data = context.Workflow.Data as MyData;
+                    _logger.LogInformation($"Recruitment Process Started for {data.CandidateName}");
                     Console.WriteLine($"Recruitment Process Started for {data.CandidateName}");
                 })
                 .Then<Screening>()
@@ -66,11 +78,12 @@ namespace WorkflowCoreWebApi
                     )
                  ).If(data => data.candidateStatus.ToLower() == "rejected").Do(reject => reject
                     .Then<SendMail>()
-                    .EndWorkflow()
                  )
-                 .Then(c =>
+                 .Then(async c =>
                  {
                      var data = c.Workflow.Data as MyData;
+                     await _redisService.RemoveFromListAsync(_CandidateListKey, data.CandidateID.ToString());
+                     _logger.LogInformation($"Recruitment Process Completed for {data.CandidateName}");
                      Console.WriteLine($"Recruitment Process Completed for {data.CandidateName}");
                  })
                  .EndWorkflow();
